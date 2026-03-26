@@ -1,0 +1,19 @@
+{
+  "name": "AshRoad.Tests.EditMode",
+  "rootNamespace": "AshRoad.Tests",
+  "references": [
+    "AshRoad.Runtime",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "nunit.framework"
+  ],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
