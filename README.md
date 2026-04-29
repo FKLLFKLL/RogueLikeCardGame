@@ -1,32 +1,25 @@
-# Ash Road (Unity Prototype Scaffold)
+# RogueLikeCardGame Prototype Update
 
-Ash Road is a story-first, single-player roguelike deckbuilder prototype scaffold.
+## What changed
 
-## Setup
-1. Open this folder in Unity 2022.3+ (2D template recommended).
-2. Let Unity generate project files and package cache.
-3. Open `Assets/Scenes/Boot.unity` as the startup scene.
+This repo now includes a lightweight Unity-friendly vertical slice for the updated 3-path combat design:
 
-## Architecture Summary
-- **ScriptableObjects** hold static content (`CardData`, `EventData`, `EnemyData`, etc.).
-- **Runtime managers** hold mutable run/session state (`RunManager`, `CombatManager`, `StoryProgressManager`).
-- **SceneFlowController** orchestrates scene transitions.
-- **Personality / Clue systems** are persistent meta-progression pillars.
+- **3 enemy gauges** (Health / Emotion / Awareness) and **enemy combat state** (Neutral / Aggressive).
+- **Card personality-through-cards** metadata (Nerve / Heart / Wits) with intent + multi-gauge effects.
+- **Event reward card grants** wired through card ID resolution.
+- **Reunion outcome evaluator** based on collected/final card affinities.
+- **Story progress fix** where true-ending clue-group evaluation is computed from all discovered groups.
+- **Prototype starter content scaffolding** with the requested sample cards.
 
-## Core Loop
-Main Menu -> Map Node -> (Event/Combat/Camp/etc.) -> Rewards/Progress -> Next Node -> Boss/Failure -> Meta Hub -> New Run.
+## Notes
 
-## Prototype Rules Included
-- 3 AP at turn start
-- 5-card starting hand
-- Food consumed when traversing map nodes
-- Branching map node progression
-- Event choice requirement checks (resources, clues, personality)
-- Combat goals: DefeatAll / SurviveTurns / Escape
-- Soft-failure returns to MetaHub with persistent clue/story progress retained
+- The implementation is intentionally prototype-level and manager-driven.
+- Debug logs are used for visibility instead of polished UI.
+- TODO comments mark deferred narrative/UI integration points.
 
-## Next Steps
-- Wire ScriptableObject assets in Unity Inspector
-- Build dedicated UI prefabs for Map/Event/Combat screens
-- Expand event and encounter content libraries
-- Add save-slot support and content validation tooling
+## Next steps
+
+1. Hook these scripts into existing scene objects and UI.
+2. Replace prototype content scaffolding with real ScriptableObject assets.
+3. Expand enemy turn AI and encounter-level victory condition configuration.
+4. Implement full reunion dialogue branching using `ReunionEvaluationResult`.
