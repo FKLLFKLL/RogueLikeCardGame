@@ -1,0 +1,28 @@
+{
+  "combatCards": [
+    "combat_01",
+    "combat_02",
+    "combat_03",
+    "combat_04",
+    "combat_05",
+    "combat_06",
+    "combat_07",
+    "combat_08",
+    "combat_09",
+    "combat_10"
+  ],
+  "toolCards": [
+    "tool_01",
+    "tool_02",
+    "tool_03",
+    "tool_04",
+    "tool_05",
+    "tool_06"
+  ],
+  "consumables": [
+    "consumable_01",
+    "consumable_02",
+    "consumable_03",
+    "consumable_04"
+  ]
+}
