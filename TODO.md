@@ -1,9 +1,17 @@
-# TODO (Open Map Pivot Priorities)
+# TODO (Post-Vertical-Slice Follow-ups)
 
-1. Replace placeholder open-map movement with authored tile/grid generation and chunk streaming.
-2. Connect building interactions to real reward pipelines (cards, food, clues, deck mods, combat starts).
-3. Hook boundary trigger into scene flow + boss arena transition.
-4. Implement full final-friend reveal dialogue and branch content.
-5. Expand status system with Frail + resistance/immunity data and UI icons.
-6. Add run-time deck persistence from exploration map into final boss combat bootstrap.
-7. Remove legacy node-map and node-selection UI from scenes/prefabs.
+## High priority polish
+1. Replace debug-log feedback with real map/combat HUD panels.
+2. Add authored reward choice UI for events + merchant purchase flow.
+3. Add proper failure scene and retry loop when player HP reaches 0.
+4. Add final boss reveal dialogue before combat and a true ending scene after combat.
+
+## Systems expansion
+5. Add additional status effects, cleanse/immunity hooks, and iconized status UI.
+6. Add richer enemy intent patterns and multi-enemy encounters.
+7. Add save/load for run-state persistence between sessions.
+8. Add balancing pass for aggression scaling and card values.
+
+## Content
+9. Expand card set with clearer Nerve/Heart/Wits archetypes.
+10. Implement clue text, story branches, and mixed-ending authored variants.

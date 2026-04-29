@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using RogueLikeCardGame.Data;
-using RogueLikeCardGame.Runtime;
 using RogueLikeCardGame.Shared;
 
 namespace RogueLikeCardGame.Story
@@ -11,19 +10,20 @@ namespace RogueLikeCardGame.Story
         public ReunionTone Tone { get; }
         public CardPersonalityAffinity DominantAffinity { get; }
         public CardPersonalityAffinity RunnerUpAffinity { get; }
+        public bool IsTie { get; }
 
-        public ReunionEvaluationResult(ReunionTone tone, CardPersonalityAffinity dominantAffinity, CardPersonalityAffinity runnerUpAffinity)
+        public ReunionEvaluationResult(ReunionTone tone, CardPersonalityAffinity dominantAffinity, CardPersonalityAffinity runnerUpAffinity, bool isTie)
         {
             Tone = tone;
             DominantAffinity = dominantAffinity;
             RunnerUpAffinity = runnerUpAffinity;
+            IsTie = isTie;
         }
     }
 
     public class ReunionOutcomeEvaluator
     {
-        // TODO: Plug this result into the reunion dialogue controller/UI when narrative implementation lands.
-        public ReunionEvaluationResult EvaluateByCards(IEnumerable<string> finalCardIds, ResourceManager resourceManager)
+        public ReunionEvaluationResult EvaluateByCards(IEnumerable<CardData> finalCards, Runtime.ResourceManager _)
         {
             Dictionary<CardPersonalityAffinity, int> scores = new()
             {
@@ -32,27 +32,18 @@ namespace RogueLikeCardGame.Story
                 [CardPersonalityAffinity.Wits] = 0
             };
 
-            foreach (string cardId in finalCardIds ?? Enumerable.Empty<string>())
+            foreach (CardData card in finalCards ?? Enumerable.Empty<CardData>())
             {
-                CardData card = resourceManager.ResolveCard(cardId);
-                if (card == null || card.personalityAffinity == CardPersonalityAffinity.None)
-                {
-                    continue;
-                }
-
-                if (!scores.ContainsKey(card.personalityAffinity))
-                {
-                    continue;
-                }
-
+                if (card == null || card.personalityAffinity == CardPersonalityAffinity.None) continue;
                 scores[card.personalityAffinity] += card.personalityWeight;
             }
 
             var ordered = scores.OrderByDescending(pair => pair.Value).ToArray();
+            bool tie = ordered[0].Value == ordered[1].Value;
             CardPersonalityAffinity dominant = ordered[0].Key;
             CardPersonalityAffinity runnerUp = ordered[1].Key;
 
-            ReunionTone tone = dominant switch
+            ReunionTone tone = tie ? ReunionTone.Balanced : dominant switch
             {
                 CardPersonalityAffinity.Nerve => ReunionTone.NerveDominant,
                 CardPersonalityAffinity.Heart => ReunionTone.HeartDominant,
@@ -60,7 +51,7 @@ namespace RogueLikeCardGame.Story
                 _ => ReunionTone.Balanced
             };
 
-            return new ReunionEvaluationResult(tone, dominant, runnerUp);
+            return new ReunionEvaluationResult(tone, dominant, runnerUp, tie);
         }
     }
 }

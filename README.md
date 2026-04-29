@@ -1,28 +1,31 @@
 # RogueLikeCardGame Prototype Update
 
-## New Direction: Open Exploration Run
+## Current vertical slice loop (playable)
+- Move in `MapScene` with 2D free movement.
+- Interact with buildings (touch or press `E` nearby):
+  - Event: gain random card.
+  - Food/scavenge: gain food.
+  - Camp: restore HP.
+  - Merchant: placeholder card reward.
+  - Story: gain clue placeholder.
+- Touch roaming enemies to enter combat.
+- Combat uses current run deck and tracks player HP + enemy HP/Aggression + statuses.
+- Win normal combat to return to map with persistent HP/food/clues/deck.
+- Reach map boundary to trigger friend final boss combat.
+- Win final boss to show placeholder ending based on Nerve/Heart/Wits deck dominance.
 
-The project direction is now a **2D open exploration roguelike run** instead of a branching Slay-the-Spire-style node path.
+## Combat model (v1)
+- AP per turn: **3**
+- Draw per turn: **5**
+- Max hand size: **10**
+- Draw/discard/exhaust piles implemented.
+- Statuses implemented for prototype logic:
+  - **Stun**: enemy skips next action.
+  - **Weak**: enemy outgoing damage reduced.
+  - **Vulnerable**: enemy takes increased damage.
+- Aggression affects enemy outgoing damage and enemy incoming damage multiplier.
 
-### Core loop
-- Explore a 2D map in real time.
-- Enemies move around the world map.
-- Buildings (houses/ruins/shops/camps/story sites) trigger events.
-- Collect cards, food, clues, and resources while traveling.
-- Reach the boundary of the map.
-- Boundary triggers the final boss encounter (missing best friend reveal placeholder).
-- Fight the boss using the cards collected during the run.
-
-### Combat model update
-- Combat now tracks **2 enemy gauges**: **HP + Aggression**.
-- Awareness/escape-by-awareness logic has been removed from the runtime combat path.
-- Aggression modifies both enemy outgoing damage and vulnerability to incoming damage.
-- Wits-oriented cards apply status effects (initial support: Blind, Weak, Stun, Vulnerable).
-- AP remains 3, hand draw target remains 5, max hand size remains 10.
-
-### System scaffolding added
-- Open map manager + player map controller.
-- Enemy map walker/patrol scaffold.
-- Building interaction scaffold (event/merchant/camp/story).
-- Boundary trigger + final boss encounter placeholder with TODO reveal hook.
-- Reunion personality outcome remains, based on deck affinity counts (Nerve/Heart/Wits).
+## Notes
+- Uses lightweight debug logs + placeholder text in place of full UI.
+- Node-map assumptions are bypassed in this runtime path; open-map flow is now the active prototype loop.
+- TODO hooks are left in code for UI, narrative reveal, balance, and authored content.
