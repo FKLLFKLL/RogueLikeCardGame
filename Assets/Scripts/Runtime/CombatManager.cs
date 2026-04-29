@@ -1,6 +1,5 @@
 using UnityEngine;
 using RogueLikeCardGame.Data;
-using RogueLikeCardGame.Shared;
 
 namespace RogueLikeCardGame.Runtime
 {
@@ -15,81 +14,34 @@ namespace RogueLikeCardGame.Runtime
         private EnemyRuntime enemy;
         private int playerAp;
         private int temporaryBlock;
-        private float temporaryBlockPercent;
 
         public EnemyRuntime Enemy => enemy;
         public int PlayerAp => playerAp;
 
-        private void Start()
-        {
-            StartEncounter(encounterEnemy);
-        }
+        private void Start() => StartEncounter(encounterEnemy);
 
         public void StartEncounter(EnemyData enemyData)
         {
             enemy = new EnemyRuntime(enemyData);
             playerAp = ApPerTurn;
             temporaryBlock = 0;
-            temporaryBlockPercent = 0f;
             DrawCards(DrawTarget);
             DebugState("Encounter started");
         }
 
         public bool TryPlayCard(CardData card)
         {
-            if (card == null || playerAp < card.apCost)
-            {
-                return false;
-            }
-
-            if (enemy.CombatState == EnemyCombatState.Neutral && !card.canBeUsedInNeutral)
-            {
-                Debug.Log($"[Combat] Card blocked in neutral state: {card.displayName}");
-                return false;
-            }
-
+            if (card == null || playerAp < card.apCost) return false;
             playerAp -= card.apCost;
-            ResolveCard(card);
 
-            bool won = IsEncounterWon();
-            if (!won)
-            {
-                DebugState($"Played {card.displayName}");
-            }
+            int damage = Mathf.RoundToInt(card.damageAmount * enemy.GetDamageMultiplierAgainstEnemy());
+            enemy.ModifyHealth(-damage);
+            enemy.ModifyAggression(card.aggressionModification);
+            enemy.ApplyStatus(card.statusEffect, card.statusDuration);
+            temporaryBlock += card.blockAmount;
 
+            if (!IsEncounterWon()) DebugState($"Played {card.displayName}");
             return true;
-        }
-
-        private void ResolveCard(CardData card)
-        {
-            enemy.ModifyGauge(card.primaryGaugeTarget, card.primaryGaugeAmount);
-
-            if (card.useSecondaryGauge)
-            {
-                enemy.ModifyGauge(card.secondaryGaugeTarget, card.secondaryGaugeAmount);
-            }
-
-            if (card.useTertiaryGauge)
-            {
-                enemy.ModifyGauge(card.tertiaryGaugeTarget, card.tertiaryGaugeAmount);
-            }
-
-            if (card.blockAmount > 0)
-            {
-                temporaryBlock += card.blockAmount;
-            }
-
-            if (card.blockPercent > 0f)
-            {
-                temporaryBlockPercent = Mathf.Clamp01(temporaryBlockPercent + card.blockPercent);
-            }
-
-            if (card.modifiesEnemyStateToAggressive && enemy.CombatState == EnemyCombatState.Neutral)
-            {
-                enemy.SetAggressive();
-            }
-
-            Debug.Log($"[Combat] {card.displayName} resolved. Gauges H:{enemy.Health} E:{enemy.Emotion} A:{enemy.Awareness}");
         }
 
         public void EndPlayerTurn()
@@ -97,54 +49,38 @@ namespace RogueLikeCardGame.Runtime
             ExecuteEnemyTurn();
             playerAp = ApPerTurn;
             temporaryBlock = 0;
-            temporaryBlockPercent = 0f;
             DrawCards(DrawTarget);
             DebugState("Turn advanced");
         }
 
         private void ExecuteEnemyTurn()
         {
-            if (enemy.CombatState == EnemyCombatState.Neutral)
+            if (enemy.ShouldSkipTurnFromStun())
             {
-                Debug.Log("[Combat] Neutral enemy hesitates and does not attack.");
+                Debug.Log("[Combat] Enemy is stunned and skips turn.");
                 return;
             }
 
-            int damage = enemy.Data.aggressiveAttackDamage;
-
-            if (enemy.Emotion <= enemy.Data.lowEmotionThreshold)
+            if (enemy.ShouldMissTurnFromBlind() && Random.value <= 0.5f)
             {
-                damage = Mathf.Max(0, damage - 2);
-            }
-            else if (enemy.Emotion >= enemy.Data.highEmotionThreshold)
-            {
-                damage += 2;
+                Debug.Log("[Combat] Enemy attack missed from blind.");
+                return;
             }
 
-            if (enemy.Awareness <= enemy.Data.lowAwarenessThreshold)
-            {
-                damage = Mathf.Max(0, damage - 2);
-            }
-
-            int percentBlocked = Mathf.RoundToInt(damage * temporaryBlockPercent);
-            int reducedByBlock = Mathf.Min(temporaryBlock + percentBlocked, damage);
+            int damage = Mathf.RoundToInt(enemy.Data.baseAttackDamage * enemy.GetOutgoingDamageMultiplier());
+            int reducedByBlock = Mathf.Min(temporaryBlock, damage);
             int finalDamage = damage - reducedByBlock;
-
             Debug.Log($"[Combat] Enemy attacks for {damage} ({reducedByBlock} blocked). Player takes {finalDamage}.");
         }
 
         private bool IsEncounterWon()
         {
-            bool won = enemy.Health <= 0 || enemy.Emotion <= 0 || enemy.Awareness <= 0;
-            if (won)
-            {
-                Debug.Log($"[Combat] Victory! H:{enemy.Health} E:{enemy.Emotion} A:{enemy.Awareness}");
-            }
-
+            bool won = enemy.Health <= 0;
+            if (won) Debug.Log($"[Combat] Victory! Enemy HP:{enemy.Health} Aggression:{enemy.Aggression}");
             return won;
         }
 
-        private void DrawCards(int count)
+        private static void DrawCards(int count)
         {
             int drawCount = Mathf.Clamp(count, 0, MaxHandSize);
             Debug.Log($"[Combat] Draw {drawCount} cards (target hand size {DrawTarget}, max {MaxHandSize}).");
@@ -152,7 +88,7 @@ namespace RogueLikeCardGame.Runtime
 
         private void DebugState(string prefix)
         {
-            Debug.Log($"[Combat] {prefix} | AP:{playerAp} EnemyState:{enemy.CombatState} H:{enemy.Health} E:{enemy.Emotion} A:{enemy.Awareness}");
+            Debug.Log($"[Combat] {prefix} | AP:{playerAp} Enemy HP:{enemy.Health} Aggression:{enemy.Aggression}");
         }
     }
 }

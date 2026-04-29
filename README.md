@@ -1,25 +1,28 @@
 # RogueLikeCardGame Prototype Update
 
-## What changed
+## New Direction: Open Exploration Run
 
-This repo now includes a lightweight Unity-friendly vertical slice for the updated 3-path combat design:
+The project direction is now a **2D open exploration roguelike run** instead of a branching Slay-the-Spire-style node path.
 
-- **3 enemy gauges** (Health / Emotion / Awareness) and **enemy combat state** (Neutral / Aggressive).
-- **Card personality-through-cards** metadata (Nerve / Heart / Wits) with intent + multi-gauge effects.
-- **Event reward card grants** wired through card ID resolution.
-- **Reunion outcome evaluator** based on collected/final card affinities.
-- **Story progress fix** where true-ending clue-group evaluation is computed from all discovered groups.
-- **Prototype starter content scaffolding** with the requested sample cards.
+### Core loop
+- Explore a 2D map in real time.
+- Enemies move around the world map.
+- Buildings (houses/ruins/shops/camps/story sites) trigger events.
+- Collect cards, food, clues, and resources while traveling.
+- Reach the boundary of the map.
+- Boundary triggers the final boss encounter (missing best friend reveal placeholder).
+- Fight the boss using the cards collected during the run.
 
-## Notes
+### Combat model update
+- Combat now tracks **2 enemy gauges**: **HP + Aggression**.
+- Awareness/escape-by-awareness logic has been removed from the runtime combat path.
+- Aggression modifies both enemy outgoing damage and vulnerability to incoming damage.
+- Wits-oriented cards apply status effects (initial support: Blind, Weak, Stun, Vulnerable).
+- AP remains 3, hand draw target remains 5, max hand size remains 10.
 
-- The implementation is intentionally prototype-level and manager-driven.
-- Debug logs are used for visibility instead of polished UI.
-- TODO comments mark deferred narrative/UI integration points.
-
-## Next steps
-
-1. Hook these scripts into existing scene objects and UI.
-2. Replace prototype content scaffolding with real ScriptableObject assets.
-3. Expand enemy turn AI and encounter-level victory condition configuration.
-4. Implement full reunion dialogue branching using `ReunionEvaluationResult`.
+### System scaffolding added
+- Open map manager + player map controller.
+- Enemy map walker/patrol scaffold.
+- Building interaction scaffold (event/merchant/camp/story).
+- Boundary trigger + final boss encounter placeholder with TODO reveal hook.
+- Reunion personality outcome remains, based on deck affinity counts (Nerve/Heart/Wits).

@@ -28,7 +28,7 @@ namespace RogueLikeCardGame.Debugging
                 return;
             }
 
-            Debug.Log($"[DebugHUD] AP:{combatManager.PlayerAp}, State:{combatManager.Enemy.CombatState}, H:{combatManager.Enemy.Health}, E:{combatManager.Enemy.Emotion}, A:{combatManager.Enemy.Awareness}");
+            Debug.Log($"[DebugHUD] AP:{combatManager.PlayerAp}, Enemy HP:{combatManager.Enemy.Health}, Aggression:{combatManager.Enemy.Aggression}");
         }
     }
 }
