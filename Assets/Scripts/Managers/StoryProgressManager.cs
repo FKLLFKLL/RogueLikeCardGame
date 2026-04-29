@@ -15,13 +15,30 @@ namespace AshRoad.Managers
         public void AddClue(string clueId, string groupId)
         {
             Data.clues.Add(clueId);
-            EvaluateTrueEnding(new HashSet<string>{groupId});
+            if (!string.IsNullOrWhiteSpace(groupId))
+            {
+                Data.clueGroups.Add(groupId);
+            }
+
+            EvaluateTrueEnding(Data.clueGroups);
         }
 
         public void UnlockScene(string sceneId) => Data.scenes.Add(sceneId);
 
         public void EvaluateTrueEnding(HashSet<string> knownGroups)
         {
+            if (knownGroups == null)
+            {
+                Data.trueEndingEligible = false;
+                return;
+            }
+
+            if (requiredTrueEndingGroups == null || requiredTrueEndingGroups.Count == 0)
+            {
+                Data.trueEndingEligible = false;
+                return;
+            }
+
             bool met = true;
             foreach (var group in requiredTrueEndingGroups) if (!knownGroups.Contains(group)) met = false;
             Data.trueEndingEligible = met;
