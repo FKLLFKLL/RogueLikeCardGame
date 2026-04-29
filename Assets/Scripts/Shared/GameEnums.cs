@@ -9,8 +9,19 @@ namespace RogueLikeCardGame.Shared
     public enum EnemyGaugeType
     {
         Health = 0,
-        Emotion = 1,
-        Awareness = 2
+        Aggression = 1,
+        Emotion = 2,
+        Awareness = 3
+    }
+
+    public enum StatusEffectType
+    {
+        None = 0,
+        Blind = 1,
+        Weak = 2,
+        Stun = 3,
+        Vulnerable = 4,
+        Frail = 5
     }
 
     public enum CardPersonalityAffinity

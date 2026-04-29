@@ -3,11 +3,11 @@ using RogueLikeCardGame.Shared;
 
 namespace RogueLikeCardGame.Data
 {
-    public enum NeutralBehaviorType
+    public enum MapPatrolBehavior
     {
-        Wait = 0,
-        Warn = 1,
-        Patrol = 2
+        Idle = 0,
+        Patrol = 1,
+        Roam = 2
     }
 
     [CreateAssetMenu(menuName = "RogueLike/Enemy Data", fileName = "EnemyData")]
@@ -17,18 +17,17 @@ namespace RogueLikeCardGame.Data
         public string displayName;
 
         [Header("Core gauges")]
-        public int maxHealth = 30;
-        [Range(0, 100)] public int startingEmotion = 50;
-        [Range(0, 100)] public int startingAwareness = 50;
+        public int maxHp = 30;
+        public int startingAggression = 2;
 
         [Header("Combat behavior")]
-        public EnemyCombatState startingCombatState = EnemyCombatState.Neutral;
-        public int aggressiveAttackDamage = 6;
-        public NeutralBehaviorType neutralBehaviorType = NeutralBehaviorType.Wait;
+        public int baseAttackDamage = 6;
+        public float aggressionDamageScaling = 0.15f;
+        public float aggressionVulnerabilityScaling = 0.1f;
 
-        [Header("Threshold hints")]
-        [Range(0, 100)] public int lowEmotionThreshold = 20;
-        [Range(0, 100)] public int highEmotionThreshold = 80;
-        [Range(0, 100)] public int lowAwarenessThreshold = 20;
+        [Header("Map behavior")]
+        public MapPatrolBehavior patrolBehavior = MapPatrolBehavior.Patrol;
+        public float patrolSpeed = 1.2f;
+        public float patrolRadius = 4f;
     }
 }
